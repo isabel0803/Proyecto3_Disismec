@@ -1,0 +1,43 @@
+# encoding: utf-8
+# 2021 R1
+SetScriptVersion(Version="21.1.216")
+template1 = GetTemplate(TemplateName="Rigid Dynamics")
+system1 = template1.CreateSystem()
+geometry1 = system1.GetContainer(ComponentName="Geometry")
+geometry1.Edit(IsSpaceClaimGeometry=True)
+geometry1.Exit()
+template2 = GetTemplate(
+    TemplateName="Static Structural",
+    Solver="ANSYS")
+system2 = template2.CreateSystem()
+system1.Delete()
+geometry2 = system2.GetContainer(ComponentName="Geometry")
+geometry2.SetFile(FilePath="E:/INFO USER/Downloads/twistlock_2.stp")
+modelComponent1 = system2.GetComponent(Name="Model")
+modelComponent1.Refresh()
+setupComponent1 = system2.GetComponent(Name="Setup")
+setupComponent1.Refresh()
+setup1 = system2.GetContainer(ComponentName="Setup")
+setup1.Edit()
+Save(Overwrite=True)
+engineeringData1 = system2.GetContainer(ComponentName="Engineering Data")
+material1 = engineeringData1.GetMaterial(Name="Structural Steel")
+matlProp1 = material1.GetProperty(Name="Elasticity")
+matlProp1.SetData(
+    Variables=["Young's Modulus"],
+    Values=[["206000000000 [Pa]"]])
+matlProp1.SetData(
+    Variables=["Poisson's Ratio"],
+    Values=[["0.29"]])
+favorites1 = EngData.LoadFavoriteItems()
+library1 = EngData.OpenLibrary(
+    Name="ANSYS GRANTA Materials Data for Simulation (Sample)",
+    Source="Granta_Design_Typical_Materials.xml")
+library2 = EngData.OpenLibrary(
+    Name="General Materials",
+    Source="General_Materials.xml")
+Save(Overwrite=True)
+Save(Overwrite=True)
+model1 = system2.GetContainer(ComponentName="Model")
+model1.Exit()
+Save(Overwrite=True)
